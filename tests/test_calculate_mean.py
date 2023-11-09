@@ -10,24 +10,28 @@ class CalculateMeanTests(unittest.TestCase):
 
     def test_calculate_mean(self):
         temperatures = [49, 57, 56, 55, 53]
+        #these are integers returning an integer
         expected_result = 54
         result = weather.calculate_mean(temperatures)
         self.assertEqual(result, expected_result)
 
     def test_calculate_mean_floats(self):
         temperatures = [51.0, 58.2, 59.9, 52.4, 52.1, 48.4, 47.8, 53.43]
+        #these are floats returning a float
         expected_result = 52.90375
         result = weather.calculate_mean(temperatures)
         self.assertEqual(result, expected_result)
 
     def test_calculate_mean_strings(self):
         temperatures = ["51", "58", "59", "52", "52", "48", "47", "53"]
+        #these are strings returning a float
         expected_result = 52.5
         result = weather.calculate_mean(temperatures)
         self.assertEqual(result, expected_result)
     
     def test_calculate_mean_negative(self):
         temperatures = [-51, -58, -59, -52, -52, -48, -47, -53]
+        #these are negative numbers returning a float result
         expected_result = -52.5
         result = weather.calculate_mean(temperatures)
         self.assertEqual(result, expected_result)
