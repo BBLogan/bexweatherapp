@@ -1,0 +1,303 @@
+import csv
+from datetime import datetime
+
+DEGREE_SYBMOL = u"\N{DEGREE SIGN}C"
+
+# READ THE DOC STRINGS - THE FORMULA IS THE ONE YOU'RE USING AT THE TOP OF EACH PROBLEM
+
+# DONE
+def format_temperature(temp):
+    """Takes a temperature and returns it in string format with the degrees
+        and celcius symbols.
+
+    Args:
+        temp: A string representing a temperature.
+    Returns:
+        A string contain the temperature and "degrees celcius."
+    """
+    return f"{temp}{DEGREE_SYBMOL}"
+# pass
+
+# DONE
+def convert_date(iso_string):
+    """Converts and ISO formatted date into a human readable format.
+
+    Args:
+        iso_string: An ISO date string..
+    Returns:
+        A date formatted like: Weekday Date Month Year e.g. Tuesday 06 July 2021
+    """
+    try:
+        # moving the ISO string into a datetime object
+        date_object = datetime.fromisoformat(iso_string)
+
+        # formatting the datetime object into the desired string format
+        formatted_date = date_object.strftime('%A %d %B %Y')
+        return formatted_date
+    
+    except ValueError:
+        # handles the invalid ISO strings
+        return "Invalid date format"
+    
+    #strftime = string format time funtion 
+    #date_object has the following parts: %A - full weekday name; %d - day of the month as a zero-padded decimal number (01, 0); %B - full month name; %Y - year with century as a decimal number (four digit year - 2023)
+# pass
+
+# DONE
+def convert_f_to_c(temp_in_farenheit):
+    """Converts an temperature from farenheit to celcius.
+
+    Args:
+        temp_in_farenheit: float representing a temperature.
+    Returns:
+        A float representing a temperature in degrees celcius, rounded to 1dp.
+    """
+    celcius = round((float(temp_in_farenheit) - 32) * (5/9), 1)
+    return celcius
+# pass
+
+# DONE
+def calculate_mean(weather_data):
+    """Calculates the mean value from a list of numbers.
+
+    Args:
+        weather_data: a list of numbers.
+    Returns:
+        A float representing the mean value.
+    """
+    # the below can be shortened by using the len function
+    # Check if the list is empty to avoid division by zero
+    if not weather_data:
+        return None
+
+    # starting the sum and count
+    total = 0
+    count = 0
+
+    # move through the data
+    for value in weather_data:
+        try:
+            # attempting to convert the value to a float
+            numeric_value = float(value)
+            total += numeric_value
+            count += 1
+        except ValueError:
+            # ignoring non-numerical values
+            pass
+    
+    # check if all values are non-numeric
+    if count == 0:
+        return None
+    
+    # calculate the mean by dividing the total by the count
+    mean_value = total / count
+    return mean_value
+# Jordans answer - return sum([float(num) for num in weather_data]) / len(weather_data)
+# pass
+
+# DONE
+def load_data_from_csv(csv_file):  
+    """Reads a csv file and stores the data in a list.
+
+    Args:
+        csv_file: a string representing the file path to a csv file.
+    Returns:
+        A list of lists, where each sublist is a (non-empty) line in the csv file.
+    """
+    data = []
+
+    with open(csv_file, 'r', newline="", encoding="utf-8", ) as file:
+        csv_reader = csv.reader(file)
+        
+        header = next(csv_reader, None)
+
+        for row in csv_reader:
+            if len(row) == 3:
+                date, min_temp, max_temp = row
+                data.append([date, int(min_temp), int(max_temp)])
+    return data
+
+
+# Jordans answer - return [[row["date"], float(row)["min"]), float(row["max"])] for row in csv.DictReader(open(csv_file))if row]
+# pass
+# def find_last_occurrence(elem, weather_data) - new definition jordan buiit
+    #jordans answer - NEW FUNCTION - NOT IN ASSIGNMENT
+    # return len(weather_data) - 1 - weather_data[::-1].index(elm)
+    # """ find the last occurance of an element in a list. 
+
+    # Args:
+    #     elem: the number to find in the list.
+    #     weather_data: a list of numbers.
+    # Returns:
+    #     the index of the element's last occurrence in the list
+    # """
+
+# DONE
+def find_min(weather_data):
+    """Calculates the minimum value in a list of numbers.
+
+    Args:
+        weather_data: A list of numbers.
+    Returns:
+        The minium value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
+    """
+    if not weather_data:
+        return ()
+    
+    min_value = None
+    min_index = None
+
+    for i, value in enumerate(weather_data):
+        if isinstance(value, str):
+            try:
+                value = float(value)
+            except ValueError:
+                continue
+
+        if min_value is None or value < min_value:
+            min_value = value
+            min_index = i
+        elif value == min_value:
+            min_index = i
+
+    return min_value, min_index
+# jordans answer - return (float(min(weather_data)), find_last_occirence(min(weather_data), weather_data)) if weather_data else ()
+# pass
+
+# DONE
+def find_max(weather_data):
+    """Calculates the maximum value in a list of numbers.
+
+    Args:
+        weather_data: A list of numbers.
+    Returns:
+        The maximum value and it's position in the list. (In case of multiple matches, return the index of the *last* example in the list.)
+    """
+    if not weather_data:
+        return ()
+    
+    max_value = None
+    max_index = None
+
+    for i, value in enumerate(weather_data):
+        if isinstance(value, str):
+            try:
+                value = float(value)
+            except ValueError:
+                continue
+
+        if max_value is None or value > max_value:
+            max_value = value
+            max_index = i
+        elif value == max_value:
+            max_index = i
+
+    return max_value, max_index
+#jordan's answer - return (float(max(weather_data)), find_last_occurrence(max(weather_data), weather_data)) if weather_data else ()
+# pass
+
+# DONE
+def generate_summary(weather_data):
+    """Outputs a summary for the given weather data.
+
+    Args:
+        weather_data: A list of lists, where each sublist represents a day of weather data.
+    Returns:
+        A string containing the summary information.
+    """
+    if not weather_data:
+        return "No weather data available."
+    
+    summary = []
+
+    summary = f"{len(weather_data)} Day Overview\n"
+
+    # for day in weather_data:
+    #     date, min_temp, max_temp = day
+        # summary += f"{convert_date(date)}\n"
+    # date += f"  {convert_date(len[0])}"
+# loop through our weather data agian - and if the item == (matches) my min_temp i want to assign the index[0] position to be the date pulled out - have to do it for the min_temp and also the max_temp - copy format from summay += f" function statement"
+    min_values = [day[1] for day in weather_data]
+    min_temp_value, min_temp_index = find_min(min_values)
+    min_temp_date = weather_data[min_temp_index][0]
+
+
+    max_values = [day[2] for day in weather_data]
+    max_temp_value, max_temp_index = find_max(max_values)
+    max_temp_date = weather_data[max_temp_index][0]
+
+    summary += f"  The lowest temperature will be {format_temperature(convert_f_to_c(min_temp_value))}, and will occur on {convert_date(min_temp_date)}.\n"
+    summary += f"  The highest temperature will be {format_temperature(convert_f_to_c(max_temp_value))}, and will occur on {convert_date(max_temp_date)}.\n"
+
+    avg_min = format_temperature(convert_f_to_c(calculate_mean(min_values)))
+    avg_max = format_temperature(convert_f_to_c(calculate_mean(max_values)))
+
+    summary += f"  The average low this week is {avg_min}.\n"
+    summary += f"  The average high this week is {avg_max}.\n"
+
+    return summary
+
+
+# jordan's answer - ask after assignment is submitted
+pass
+
+# # need to do the ones above before attempting this one
+def generate_daily_summary(weather_data):
+    """Outputs a daily summary for the given weather data.
+
+    Args:
+        weather_data: A list of lists, where each sublist represents a day of weather data.
+    Returns:
+        A string containing the summary information.
+    """
+    if not weather_data:
+        return "No weather data available."
+    
+    summary = ""
+    # the above is for formatting the date into ---- Friday 02 July 2021 ---- you need to pull the same date for the Min & Mex temp summary - so together in a block
+
+    for day in weather_data:
+        date = day[0]
+        min_value = day[1]
+        max_value = day[2]
+    
+        summary += f"---- {convert_date(date)} ----\n"
+        summary += f"  Minimum Temperature: {format_temperature(convert_f_to_c(min_value))}\n"
+        summary += f"  Maximum Temperature: {format_temperature(convert_f_to_c(max_value))}\n\n"
+
+    # summary = f"{generate_summary(weather_data)} Daily Summary\n"
+
+    # daily_summary = f"Daily Summary\n"
+    # daily_summary += summary
+
+    return summary
+
+    # summaries += f"  "
+
+    # summaries += f"  "
+    # the above is for formatting the min temp into Minimum Temperature:
+    # summaries += f"  "
+    # the above is for formatting the max temp into Maximum Temperature:
+
+    # min_values = [day[1] for day in weather_data]
+    # min_temp_value, min_temp_index = find_min(min_values)
+    # min_temp_date = weather_data[min_temp_index][0]
+
+
+    # max_values = [day[2] for day in weather_data]
+    # max_temp_value, max_temp_index = find_max(max_values)
+    # max_temp_date = weather_data[max_temp_index][0]
+
+    # summary += f"  The lowest temperature will be {format_temperature(convert_f_to_c(min_temp_value))}, and will occur on {convert_date(min_temp_date)}.\n"
+    # summary += f"  The highest temperature will be {format_temperature(convert_f_to_c(max_temp_value))}, and will occur on {convert_date(max_temp_date)}.\n"
+
+    # avg_min = format_temperature(convert_f_to_c(calculate_mean(min_values)))
+    # avg_max = format_temperature(convert_f_to_c(calculate_mean(max_values)))
+
+    # summary += f"  The average low this week is {avg_min}.\n"
+    # summary += f"  The average high this week is {avg_max}.\n"
+
+    # return summaries
+
+# jordan's answer - ask after assignment is submitted
+#pass
